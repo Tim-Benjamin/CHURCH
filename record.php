@@ -1,60 +1,81 @@
-<div>
-    <h3>MoMo Payments</h3>
-    <form id="momoPaymentForm">
-        <input type="text" name="name" placeholder="Name" required />
-        <input type="text" name="phone_number" placeholder="Phone Number" required />
-        <input type="number" name="amount" placeholder="Amount" required />
-        <input type="text" name="transaction_id" placeholder="Transaction ID" required />
-        <select name="payment_type" required>
-            <option value="">Select Payment Type</option>
-            <option value="Tithe">Tithe</option>
-            <option value="Contribution">Contribution</option>
-            <option value="Offering">Offering</option>
-        </select>
-        <textarea name="description" placeholder="Description"></textarea>
-        <input type="date" name="date" required />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoMo Payment Form</title>
+    <script>
+        let payments = [];
+
+        function addPayment(event) {
+            event.preventDefault();
+            const form = event.target;
+            const payment = {
+                id: Date.now(),
+                name: form.name.value,
+                amount: form.amount.value,
+                date: new Date().toLocaleString()
+            };
+            payments.push(payment);
+            form.reset();
+            displayPayments();
+        }
+
+        function displayPayments() {
+            const tableBody = document.getElementById('paymentTableBody');
+            tableBody.innerHTML = '';
+            payments.forEach((payment) => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).innerText = payment.name;
+                row.insertCell(1).innerText = payment.amount;
+                row.insertCell(2).innerText = payment.date;
+                const deleteCell = row.insertCell(3);
+                const deleteButton = document.createElement('button');
+                deleteButton.innerText = 'Delete';
+                deleteButton.onclick = () => deletePayment(payment.id);
+                deleteCell.appendChild(deleteButton);
+            });
+        }
+
+        function deletePayment(id) {
+            payments = payments.filter(payment => payment.id !== id);
+            displayPayments();
+        }
+
+        function filterPayments() {
+            const filter = document.getElementById('filterInput').value.toLowerCase();
+            const tableBody = document.getElementById('paymentTableBody');
+            Array.from(tableBody.rows).forEach(row => {
+                const name = row.cells[0].innerText.toLowerCase();
+                if (name.includes(filter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>MoMo Payment Form</h1>
+    <form onsubmit="addPayment(event)">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" required>
         <button type="submit">Submit</button>
     </form>
-
-    <div>
-        <h4>All MoMo Payments</h4>
-        <table id="momoPaymentsTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Phone Number</th>
-                    <th>Amount</th>
-                    <th>Transaction ID</th>
-                    <th>Payment Type</th>
-                    <th>Description</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Payment records will be dynamically inserted here -->
-            </tbody>
-        </table>
-        <input type="date" id="startDate" />
-        <input type="date" id="endDate" />
-        <select id="filterPaymentType">
-            <option value="">All types</option>
-            <option value="Tithe">Tithe</option>
-            <option value="Contribution">Contribution</option>
-            <option value="Offering">Offering</option>
-        </select>
-        <button id="filterBtn">Filter</button>
-    </div>
-</div>
-<script>
-    // JavaScript for form submission, table population, filtering, and error handling
-    document.getElementById('momoPaymentForm').onsubmit = function(event) {
-        event.preventDefault();
-        // Handle form submission
-        // Show success or error messages accordingly
-    };
-
-    document.getElementById('filterBtn').onclick = function() {
-        // Handle filtering of the table based on date range and payment type
-    };
-</script>
+    <input type="text" id="filterInput" oninput="filterPayments()" placeholder="Filter by name">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="paymentTableBody"></tbody>
+    </table>
+</body>
+</html>
