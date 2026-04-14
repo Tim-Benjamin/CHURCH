@@ -92,13 +92,17 @@
   }
 
   /* Update the gradient-text element with the new palette colors.
-     We toggle a CSS class to trigger a repaint-safe re-render. */
+     Fades out, swaps the gradient, then fades back in. */
   function updateGradientText(from, to) {
     const el = document.querySelector('.gradient-text');
     if (!el) return;
 
-    // Apply the new gradient directly
-    el.style.backgroundImage = `linear-gradient(135deg, ${from} 0%, ${to} 100%)`;
+    // Fade out → update gradient → fade in
+    el.style.opacity = '0';
+    setTimeout(function () {
+      el.style.backgroundImage = 'linear-gradient(135deg, ' + from + ' 0%, ' + to + ' 100%)';
+      el.style.opacity = '1';
+    }, 150);
   }
 
   /* ─────────────────────────────────────────────────────────────

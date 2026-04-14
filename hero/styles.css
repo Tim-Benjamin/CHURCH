@@ -8,6 +8,32 @@
    · Typography polish
    ============================================================ */
 
+/* ─────────────────── @property registrations ───────────────────
+   Registering blob color custom properties as <color> makes them
+   animatable via CSS transitions (Houdini CSS Properties & Values).
+   Supported in Chrome 85+, Edge 85+, Safari 16.4+, Firefox 128+.
+   ─────────────────────────────────────────────────────────────── */
+@property --blob1-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0d9488;
+}
+@property --blob2-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1d4ed8;
+}
+@property --blob3-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6366f1;
+}
+@property --blob4-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0f172a;
+}
+
 /* ---------- Base reset extras ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -146,9 +172,11 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  transition:
-    --gradient-text-from var(--palette-duration) ease,
-    --gradient-text-to   var(--palette-duration) ease;
+  /* Gradient background-image is updated directly by script.js
+     via el.style.backgroundImage, giving an immediate repaint.
+     @property cannot transition background-image, so we rely on
+     JS for the gradient change and use opacity for a soft fade. */
+  transition: opacity 0.25s ease;
 }
 
 /* ─────────────────── TOP NAV LINKS ─────────────────── */
@@ -382,7 +410,7 @@
    'transition: background-color' already set on .blob.
    The gradient-text re-renders automatically. */
 
-/* Smooth body-level transition helper */
+/* Smooth body-level transition helper (for future background changes) */
 body {
   transition: background-color var(--palette-duration) ease;
 }
