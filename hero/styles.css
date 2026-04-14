@@ -1,0 +1,402 @@
+/* ============================================================
+   Weaverly Hero – Custom CSS
+   Tailwind utilities handle most layout; this file adds:
+   · Animated mesh-gradient blobs
+   · Glassmorphism tab active state
+   · Color-palette transitions
+   · Noise grain overlay
+   · Typography polish
+   ============================================================ */
+
+/* ---------- Base reset extras ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ---------- Color-palette CSS variables ----------
+   Updated by JS when a tab is clicked.
+   palette-0  : Pixel Streaming  (Teal / Deep Blue)
+   palette-1  : Machine Learning (Purple / Indigo)
+   palette-2  : Inference Service (Orange / Amber)
+   palette-3  : VFX               (Emerald / Cyan)
+   -------------------------------------------------- */
+:root {
+  --blob1-color : #0d9488;   /* teal-600   */
+  --blob2-color : #1d4ed8;   /* blue-700   */
+  --blob3-color : #6366f1;   /* indigo-500 */
+  --blob4-color : #0f172a;   /* slate-900  */
+  --accent-color: #2dd4bf;   /* teal-400   */
+  --gradient-text-from: #2dd4bf;
+  --gradient-text-to  : #818cf8;
+
+  /* Tab active glow */
+  --tab-glow: rgba(45, 212, 191, 0.25);
+
+  /* Transition timing for palette change */
+  --palette-duration: 1s;
+}
+
+/* ─────────────────── MESH GRADIENT BACKGROUND ─────────────────── */
+#mesh-bg {
+  position: absolute;
+  inset: 0;
+  background: #050a14;
+  overflow: hidden;
+}
+
+/* Shared blob base */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  will-change: transform, background-color;
+  transition:
+    background-color var(--palette-duration) ease,
+    opacity         var(--palette-duration) ease;
+}
+
+/* Individual blob sizes, start positions & animations */
+#blob1 {
+  width: 700px;
+  height: 700px;
+  top: -20%;
+  left: -10%;
+  background: var(--blob1-color);
+  animation: float1 18s ease-in-out infinite alternate;
+}
+
+#blob2 {
+  width: 600px;
+  height: 600px;
+  top: 10%;
+  right: -15%;
+  background: var(--blob2-color);
+  animation: float2 22s ease-in-out infinite alternate;
+}
+
+#blob3 {
+  width: 450px;
+  height: 450px;
+  bottom: 5%;
+  left: 25%;
+  background: var(--blob3-color);
+  animation: float3 15s ease-in-out infinite alternate;
+}
+
+#blob4 {
+  width: 550px;
+  height: 550px;
+  bottom: -15%;
+  right: 10%;
+  background: var(--blob4-color);
+  animation: float4 20s ease-in-out infinite alternate;
+  opacity: 0.35;
+}
+
+/* ---- Keyframe animations (translate + slight scale morph) ---- */
+@keyframes float1 {
+  0%   { transform: translate(0px,   0px)   scale(1);    }
+  33%  { transform: translate(60px,  -40px) scale(1.05); }
+  66%  { transform: translate(-30px, 70px)  scale(0.97); }
+  100% { transform: translate(40px,  50px)  scale(1.08); }
+}
+
+@keyframes float2 {
+  0%   { transform: translate(0px,   0px)   scale(1);    }
+  40%  { transform: translate(-80px, 50px)  scale(1.06); }
+  70%  { transform: translate(40px,  -60px) scale(0.96); }
+  100% { transform: translate(-50px, -30px) scale(1.1);  }
+}
+
+@keyframes float3 {
+  0%   { transform: translate(0px,  0px)   scale(1);    }
+  50%  { transform: translate(70px, 40px)  scale(1.04); }
+  100% { transform: translate(-60px, -50px) scale(0.98); }
+}
+
+@keyframes float4 {
+  0%   { transform: translate(0px,   0px)  scale(1);    }
+  45%  { transform: translate(-40px, 60px) scale(1.07); }
+  100% { transform: translate(50px,  -40px) scale(0.95); }
+}
+
+/* Noise grain overlay for depth */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ─────────────────── TYPOGRAPHY ─────────────────── */
+.hero-heading {
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    var(--gradient-text-from) 0%,
+    var(--gradient-text-to) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition:
+    --gradient-text-from var(--palette-duration) ease,
+    --gradient-text-to   var(--palette-duration) ease;
+}
+
+/* ─────────────────── TOP NAV LINKS ─────────────────── */
+.nav-link {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.nav-link:hover {
+  color: #ffffff;
+  background-color: rgba(255,255,255,0.08);
+}
+
+/* ─────────────────── TABS ─────────────────── */
+.tabs-wrapper {
+  width: 100%;
+  padding-top: 0;
+}
+
+.tabs-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px 12px 0 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  cursor: pointer;
+  position: relative;
+  transition:
+    color            0.25s ease,
+    background-color 0.25s ease,
+    border-color     0.25s ease,
+    box-shadow       0.25s ease,
+    backdrop-filter  0.25s ease;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.tab-btn:hover:not(.active) {
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* Glassmorphism active tab */
+.tab-btn.active {
+  color: #ffffff;
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.18);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  box-shadow:
+    0 -2px 12px var(--tab-glow),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  transition:
+    color            0.25s ease,
+    background-color 0.25s ease,
+    border-color     0.25s ease,
+    box-shadow       var(--palette-duration) ease;
+}
+
+/* Icon inside tab */
+.tab-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ─────────────────── TAB PANELS ─────────────────── */
+.tab-panels {
+  width: 100%;
+  padding-top: 0;
+}
+
+.tab-panel {
+  display: none;
+  animation: fadeSlideUp 0.4s ease forwards;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Stats grid */
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 0 0;
+}
+
+@media (min-width: 640px) {
+  .panel-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.panel-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.panel-stat:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ─────────────────── PARTNER BAR ─────────────────── */
+.partner-bar {
+  width: 100%;
+  background: rgba(0,0,0,0.45);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 24px 24px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.partner-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .partner-inner {
+    flex-direction: row;
+    gap: 32px;
+  }
+}
+
+.partner-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.25);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.partner-logos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.partner-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  color: rgba(255,255,255,0.3);
+  filter: grayscale(100%);
+  transition: color 0.3s ease, filter 0.3s ease;
+}
+
+.partner-logo-wrap:hover {
+  color: rgba(255,255,255,0.65);
+  filter: grayscale(0%);
+}
+
+.partner-logo {
+  height: 28px;
+  width: auto;
+}
+
+.partner-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* ─────────────────── PALETTE TRANSITION ─────────────────── */
+/* When JS swaps --blob*-color, the blobs crossfade via the
+   'transition: background-color' already set on .blob.
+   The gradient-text re-renders automatically. */
+
+/* Smooth body-level transition helper */
+body {
+  transition: background-color var(--palette-duration) ease;
+}
+
+/* ─────────────────── RESPONSIVE TWEAKS ─────────────────── */
+@media (max-width: 640px) {
+  .tabs-container {
+    gap: 6px;
+  }
+  .tab-btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  .partner-logo-wrap {
+    padding: 0 12px;
+  }
+}
